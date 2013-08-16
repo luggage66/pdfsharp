@@ -413,6 +413,12 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\ccitt-group4\src\CCITTCodecs\CCITTCodecs.csproj">
+      <Project>{e6522bfa-fba5-485f-af1d-ed53622d67fb}</Project>
+      <Name>CCITTCodecs</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

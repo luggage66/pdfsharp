@@ -54,8 +54,10 @@
 #endregion
 
 #define USE_GOTO
+using CCITTCodecs;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace PdfSharp.Pdf.Advanced
 {
@@ -627,22 +629,18 @@ namespace PdfSharp.Pdf.Advanced
     /// <returns>The size of the fax encoded image (0 on failure).</returns>
     private static int DoFaxEncodingGroup4(ref byte[] imageData, byte[] imageBits, uint bytesFileOffset, uint width, uint height)
     {
-      try
-      {
-        uint bytesPerLineBmp = ((width + 31) / 32) * 4;
-        BitWriter writer = new BitWriter(ref imageData);
-        for (uint y = 0; y < height; ++y)
+        int size;
+        CCITTEncoder encoder = new CCITTEncoder();
+        using (MemoryStream stream = new MemoryStream(imageBits, (int)bytesFileOffset, imageBits.Length - ((int)bytesFileOffset), false))
         {
-          FaxEncode2DRow(writer, bytesFileOffset, imageBits, y, (y != 0) ? y - 1 : 0xffffffff, width, height, bytesPerLineBmp);
+            using (MemoryStream stream2 = new MemoryStream(imageData, true))
+            {
+                size = encoder.Encode(stream, 0L, (int)width, (int)height, stream2);
+                stream2.Flush();
+                stream2.Close();
+            }
         }
-        writer.FlushBuffer();
-        return writer.BytesWritten();
-      }
-      catch (Exception ex)
-      {
-        ex.GetType();
-        return 0;
-      }
+        return size;
     }
 
     /// <summary>
